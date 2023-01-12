@@ -4,6 +4,8 @@ function Home() {
   const [name, setName] = useState("");
   const [sectors, setSectors] = useState("");
   const [terms, setTerms] = useState(false);
+  const [id, setId] = useState("");
+  const [edit, setEdit] = useState(false);
 
   // submit user data
   const handleSubmit = (e) => {
@@ -29,6 +31,28 @@ function Home() {
       return;
     }
 
+    // update if user want change his data
+    if (!edit && id !== "") {
+      fetch(`http://localhost:5000/api/v1/userDetails/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.result?.modifiedCount === 1) {
+            setName(data?.updateData.name);
+            setSectors(data?.updateData.sectors);
+            setTerms(data?.updateData.terms);
+            setId(data?.updateData._id);
+            setEdit(true);
+          }
+        })
+        .catch((err) => alert(err.message));
+
+      return;
+    }
+
     // submit after check
     fetch("http://localhost:5000/api/v1/userDetails", {
       method: "POST",
@@ -37,12 +61,18 @@ function Home() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setName(data.name);
-        setSectors(data.sectors);
-        setTerms(data.terms);
+        if (data?.data?._id) {
+          setName(data?.data.name);
+          setSectors(data?.data.sectors);
+          setTerms(data?.data.terms);
+          setId(data?.data._id);
+          setEdit(true);
+        }
       })
       .catch((err) => alert(err.message));
   };
+
+  console.log(id);
 
   return (
     <div className="main">
@@ -64,6 +94,7 @@ function Home() {
             className="name"
             onChange={(e) => setName(e.target.value)}
             value={name}
+            disabled={edit}
           />
         </div>
 
@@ -77,6 +108,7 @@ function Home() {
             id="sectors"
             className="sectors"
             multiple=""
+            disabled={edit}
             onChange={(e) => setSectors(e.target.value)}>
             <optgroup label="Manufacturing">
               <option value="19">
@@ -308,13 +340,24 @@ function Home() {
             type="checkbox"
             name="terms"
             id="terms"
+            disabled={edit}
             onChange={(e) => setTerms(e.target.checked)}
           />
           <label htmlFor="terms">Agree to terms</label>
         </div>
 
         {/* // submit this form  */}
-        <input type="submit" className="submit-btn" value="Submit" />
+        {edit ? (
+          <button
+            type="button"
+            value="Edit"
+            className="submit-btn"
+            onClick={() => setEdit(false)}>
+            Edit{" "}
+          </button>
+        ) : (
+          <input type="submit" className="submit-btn" value="Submit" />
+        )}
       </form>
     </div>
   );
