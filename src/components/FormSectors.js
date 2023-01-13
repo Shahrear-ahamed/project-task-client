@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 function FormSectors() {
   const [formSectors, setFormSectors] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/sectors")
+    fetch("https://project-task-peach.vercel.app/api/v1/sectors")
       .then((res) => res.json())
       .then((data) => setFormSectors(data.formSectors));
   }, []);
