@@ -34,7 +34,7 @@ function Home() {
 
     // update if user want change his data
     if (!edit && id !== "") {
-      fetch(`https://project-task-peach.vercel.app/api/v1/userDetails/${id}`, {
+      fetch(`https://project-server-ubwp.onrender.com/api/v1/userDetails/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -55,7 +55,7 @@ function Home() {
     }
 
     // submit after check
-    fetch("https://project-task-peach.vercel.app/api/v1/userDetails", {
+    fetch("https://project-server-ubwp.onrender.com/api/v1/userDetails", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
